@@ -1,0 +1,38 @@
+{
+  "game_title": "Irancell Anniversary Pac-Man",
+  "window_width": 800,
+  "window_height": 600,
+  "grid_size": 40,
+  "colors": {
+    "primary": [255, 204, 0],
+    "background": [0, 0, 0],
+    "wall": [0, 0, 255],
+    "text": [255, 255, 255]
+  },
+  "player_settings": {
+    "speed": 40,
+    "initial_lives": 3,
+    "score_per_coin": 10,
+    "score_per_power_pellet": 50,
+    "score_per_enemy": 200
+  },
+  "enemy_settings": {
+    "speed": 40,
+    "colors": [
+      [255, 0, 0],
+      [255, 192, 203],
+      [0, 255, 255],
+      [255, 165, 0]
+    ]
+  },
+  "power_mode": {
+    "duration": 300,
+    "enabled": true
+  },
+  "branding": {
+    "company_name": "Irancell",
+    "slogan": "Celebrating Years of Connection",
+    "anniversary_text": "Irancell Anniversary Edition",
+    "years_of_service": 20
+  }
+}
