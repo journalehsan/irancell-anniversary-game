@@ -123,7 +123,7 @@ class Player(Drawable, Collidable):
         pygame.draw.circle(surface, self._settings.colors.primary, (center_x, center_y), self.radius)
 
         direction_angles = {
-            Direction.RIGHT: (self.mouth_angle, 360 - self.mouth_angle),
+            Direction.RIGHT: (360 - self.mouth_angle, self.mouth_angle),
             Direction.LEFT: (180 - self.mouth_angle, 180 + self.mouth_angle),
             Direction.UP: (270 - self.mouth_angle, 270 + self.mouth_angle),
             Direction.DOWN: (90 - self.mouth_angle, 90 + self.mouth_angle),
@@ -131,7 +131,15 @@ class Player(Drawable, Collidable):
         start_angle, end_angle = direction_angles.get(self.direction, (self.mouth_angle, 360 - self.mouth_angle))
 
         points: list[Tuple[float, float]] = [(center_x, center_y)]
-        for angle in range(int(start_angle), int(end_angle) + 1):
+        
+        # Handle angle wrapping for proper arc drawing
+        if start_angle <= end_angle:
+            angles = range(int(start_angle), int(end_angle) + 1)
+        else:
+            # Wrap around 360
+            angles = list(range(int(start_angle), 360)) + list(range(0, int(end_angle) + 1))
+        
+        for angle in angles:
             radians = math.radians(angle)
             px = center_x + self.radius * math.cos(radians)
             py = center_y + self.radius * math.sin(radians)

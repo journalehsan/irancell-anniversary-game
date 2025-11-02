@@ -10,20 +10,24 @@
     "text": [255, 255, 255]
   },
   "player_settings": {
-    "speed": 40,
+    "speed": 15,
     "initial_lives": 3,
     "score_per_coin": 10,
     "score_per_power_pellet": 50,
     "score_per_enemy": 200
   },
   "enemy_settings": {
-    "speed": 40,
+    "speed": 12,
     "colors": [
       [255, 0, 0],
       [255, 192, 203],
       [0, 255, 255],
       [255, 165, 0]
     ]
+  },
+  "game_speed": {
+    "fps": 60,
+    "movement_update_rate": 4
   },
   "power_mode": {
     "duration": 300,
