@@ -107,8 +107,13 @@ class Player(Drawable, Collidable):
     def check_collision(self, x: float, y: float) -> bool:
         game_state = SingletonGameState()
         grid_size = self._settings.grid_size
+        # Add small margin to allow better corridor navigation
+        margin = 2
         for wall in game_state.walls:
-            if x < wall.x + wall.width and x + grid_size > wall.x and y < wall.y + wall.height and y + grid_size > wall.y:
+            if (x + margin < wall.x + wall.width and 
+                x + grid_size - margin > wall.x and 
+                y + margin < wall.y + wall.height and 
+                y + grid_size - margin > wall.y):
                 return True
         return False
 
