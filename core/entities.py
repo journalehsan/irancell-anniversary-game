@@ -166,7 +166,7 @@ class Enemy(Drawable, Collidable):
         self.frozen = False
         self.freeze_counter = 0
 
-    def update(self, power_mode_active: bool = False, freeze_active: bool = False) -> None:
+    def update(self, power_mode_active: bool = False, freeze_active: bool = False, player: "Player | None" = None) -> None:
         self.frightened = power_mode_active
         
         # Handle freeze state
@@ -189,8 +189,8 @@ class Enemy(Drawable, Collidable):
         self.move_counter = 0
         
         # Smart AI: Chase player 40% of the time, random 60% of the time
-        if random.random() < 0.4:
-            new_x, new_y = self._get_smart_position()
+        if player and random.random() < 0.4:
+            new_x, new_y = self._get_smart_position(player)
         else:
             new_x, new_y = self._get_new_position()
 
@@ -207,11 +207,8 @@ class Enemy(Drawable, Collidable):
 
         self.animation_counter = (self.animation_counter + 1) % 20
 
-    def _get_smart_position(self) -> Tuple[float, float]:
+    def _get_smart_position(self, player: "Player") -> Tuple[float, float]:
         """Move towards the player with some logic."""
-        game_state = SingletonGameState()
-        player = game_state.player
-        
         # Calculate direction to player
         dx = player.x - self.x
         dy = player.y - self.y

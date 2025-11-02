@@ -57,7 +57,7 @@ class GameController:
             pellet.update()
 
         for enemy in self.game_state.enemies:
-            enemy.update(self.power_mode.active, self.power_mode.freeze_active)
+            enemy.update(self.power_mode.active, self.power_mode.freeze_active, self.player)
 
         self._check_coin_collection()
         self._check_power_pellet_collection()
