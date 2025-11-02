@@ -98,6 +98,22 @@ class Player(Drawable, Collidable):
         dx, dy = direction.delta
         new_x = self.x + dx * self.speed
         new_y = self.y + dy * self.speed
+        
+        # Auto-align to grid when changing direction to help enter corridors
+        grid = self._settings.grid_size
+        align_threshold = 8  # pixels
+        
+        # If moving horizontally, try to align vertically to grid
+        if dx != 0 and dy == 0:
+            grid_y = round(self.y / grid) * grid
+            if abs(self.y - grid_y) <= align_threshold:
+                new_y = grid_y
+        
+        # If moving vertically, try to align horizontally to grid
+        if dy != 0 and dx == 0:
+            grid_x = round(self.x / grid) * grid
+            if abs(self.x - grid_x) <= align_threshold:
+                new_x = grid_x
 
         if 0 <= new_x < self._settings.width and 0 <= new_y < self._settings.height and not self.check_collision(new_x, new_y):
             self.x = new_x
