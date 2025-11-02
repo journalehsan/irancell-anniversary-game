@@ -22,7 +22,7 @@ class LevelBuilder:
         width = self._settings.width
         height = self._settings.height
 
-        # Better balanced maze with walls distributed across the entire playing field
+        # Cleaner, more balanced maze with proper spacing
         walls_data = [
             # Border walls
             (0, 0, width, grid),
@@ -33,36 +33,30 @@ class LevelBuilder:
             # Left side chambers
             (grid, grid * 2, grid * 2, grid),
             (grid, grid * 4, grid * 2, grid),
+            (grid * 3, grid * 3, grid, grid),
             (grid, grid * 7, grid * 2, grid),
-            (grid, grid * 10, grid * 2, grid),
-            (grid * 2, grid * 3, grid, grid),
-            (grid * 2, grid * 6, grid, grid),
-            (grid * 2, grid * 9, grid, grid),
-            (grid * 3, grid * 1.5, grid, grid),
             (grid * 3, grid * 8, grid, grid),
+            (grid, grid * 10, grid * 2, grid),
             (grid * 3, grid * 11, grid, grid),
             
-            # Center dividers and chambers
+            # Center passages and dividers
             (grid * 4, grid * 2, grid * 2, grid),
             (grid * 5, grid * 5, grid, grid * 2),
-            (grid * 6, grid * 2, grid, grid),
-            (grid * 6, grid * 8, grid * 2, grid),
-            (grid * 7, grid * 4, grid, grid),
+            (grid * 6, grid * 7, grid * 2, grid),
             (grid * 7, grid * 10, grid, grid),
-            (grid * 8, grid * 1, grid, grid * 2),
-            (grid * 8, grid * 9, grid * 2, grid),
-            (grid * 9, grid * 6, grid, grid),
+            (grid * 8, grid * 2, grid, grid),
+            (grid * 8, grid * 12, grid, grid),
+            (grid * 9, grid * 5, grid, grid),
             
             # Right side chambers
             (grid * 11, grid * 2, grid * 2, grid),
-            (grid * 11, grid * 5, grid, grid * 2),
-            (grid * 12, grid * 9, grid * 2, grid),
-            (grid * 13, grid * 3, grid, grid),
-            (grid * 14, grid * 6, grid, grid * 2),
-            (grid * 15, grid * 1, grid * 2, grid),
-            (grid * 15, grid * 10, grid * 2, grid),
-            (grid * 16, grid * 4, grid, grid),
-            (grid * 17, grid * 7, grid, grid),
+            (grid * 12, grid * 4, grid, grid),
+            (grid * 11, grid * 7, grid * 2, grid),
+            (grid * 13, grid * 10, grid, grid),
+            (grid * 14, grid * 5, grid, grid * 2),
+            (grid * 15, grid * 2, grid * 2, grid),
+            (grid * 15, grid * 11, grid * 2, grid),
+            (grid * 17, grid * 8, grid, grid),
         ]
 
         for x, y, w, h in walls_data:
