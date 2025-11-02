@@ -57,7 +57,7 @@ class GameController:
             pellet.update()
 
         for enemy in self.game_state.enemies:
-            enemy.update(self.power_mode.active)
+            enemy.update(self.power_mode.active, self.power_mode.freeze_active)
 
         self._check_coin_collection()
         self._check_power_pellet_collection()
@@ -91,6 +91,9 @@ class GameController:
             if self.player.x < coin.x + grid and self.player.x + grid > coin.x and self.player.y < coin.y + grid and self.player.y + grid > coin.y:
                 coin.collected = True
                 self.player.score += self._settings.player.score_per_coin
+                # 15% chance to freeze enemies when collecting a coin
+                if random.random() < 0.15:
+                    self.power_mode.activate_freeze()
 
     def _check_power_pellet_collection(self) -> None:
         grid = self._settings.grid_size

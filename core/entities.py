@@ -163,16 +163,36 @@ class Enemy(Drawable, Collidable):
         self.animation_counter = 0
         self.frightened = False
         self.move_counter = 0
+        self.frozen = False
+        self.freeze_counter = 0
 
-    def update(self, power_mode_active: bool = False) -> None:
+    def update(self, power_mode_active: bool = False, freeze_active: bool = False) -> None:
         self.frightened = power_mode_active
+        
+        # Handle freeze state
+        if freeze_active and not self.frozen:
+            self.frozen = True
+            self.freeze_counter = 60  # Freeze for 60 frames
+        
+        if self.frozen:
+            self.freeze_counter -= 1
+            if self.freeze_counter <= 0:
+                self.frozen = False
+            self.animation_counter = (self.animation_counter + 1) % 20
+            return
+        
         self.move_counter += 1
         if self.move_counter < self._settings.speed.movement_update_rate:
             self.animation_counter = (self.animation_counter + 1) % 20
             return
 
         self.move_counter = 0
-        new_x, new_y = self._get_new_position()
+        
+        # Smart AI: Chase player 40% of the time, random 60% of the time
+        if random.random() < 0.4:
+            new_x, new_y = self._get_smart_position()
+        else:
+            new_x, new_y = self._get_new_position()
 
         if self.check_collision(new_x, new_y):
             for _ in range(10):
@@ -186,6 +206,28 @@ class Enemy(Drawable, Collidable):
             self.y = new_y
 
         self.animation_counter = (self.animation_counter + 1) % 20
+
+    def _get_smart_position(self) -> Tuple[float, float]:
+        """Move towards the player with some logic."""
+        game_state = SingletonGameState()
+        player = game_state.player
+        
+        # Calculate direction to player
+        dx = player.x - self.x
+        dy = player.y - self.y
+        
+        # Choose the direction that brings us closer
+        directions = [
+            (Direction.RIGHT, abs(dx + self._settings.enemy.speed - dy)),
+            (Direction.LEFT, abs(dx - self._settings.enemy.speed - dy)),
+            (Direction.DOWN, abs(dx - (dy + self._settings.enemy.speed))),
+            (Direction.UP, abs(dx - (dy - self._settings.enemy.speed))),
+        ]
+        
+        best_direction = min(directions, key=lambda x: x[1])[0]
+        self.direction = best_direction
+        
+        return self._get_new_position()
 
     def _get_new_position(self) -> Tuple[float, float]:
         dx, dy = self.direction.delta
@@ -203,7 +245,14 @@ class Enemy(Drawable, Collidable):
         center_x = self.x + self._settings.grid_size // 2
         center_y = self.y + self._settings.grid_size // 2
 
-        color = (173, 216, 230) if self.frightened else self.color
+        # Determine color based on state
+        if self.frozen:
+            color = (100, 200, 255)  # Light blue for frozen
+        elif self.frightened:
+            color = (173, 216, 230)  # Light blue when frightened
+        else:
+            color = self.color  # Normal color
+            
         pygame.draw.circle(surface, color, (center_x, center_y), self.radius)
         pygame.draw.rect(surface, color, (center_x - self.radius, center_y, self.radius * 2, self.radius))
 
@@ -212,7 +261,15 @@ class Enemy(Drawable, Collidable):
         right_eye_x = center_x + self.radius // 3
         eye_y = center_y - self.radius // 4
 
-        if self.frightened:
+        if self.frozen:
+            # Frozen enemies have X eyes
+            pygame.draw.circle(surface, self._settings.colors.background, (left_eye_x, eye_y), eye_radius)
+            pygame.draw.circle(surface, self._settings.colors.background, (right_eye_x, eye_y), eye_radius)
+            pygame.draw.line(surface, self._settings.colors.text, (left_eye_x - eye_radius // 2, eye_y - eye_radius // 2), (left_eye_x + eye_radius // 2, eye_y + eye_radius // 2), 2)
+            pygame.draw.line(surface, self._settings.colors.text, (left_eye_x - eye_radius // 2, eye_y + eye_radius // 2), (left_eye_x + eye_radius // 2, eye_y - eye_radius // 2), 2)
+            pygame.draw.line(surface, self._settings.colors.text, (right_eye_x - eye_radius // 2, eye_y - eye_radius // 2), (right_eye_x + eye_radius // 2, eye_y + eye_radius // 2), 2)
+            pygame.draw.line(surface, self._settings.colors.text, (right_eye_x - eye_radius // 2, eye_y + eye_radius // 2), (right_eye_x + eye_radius // 2, eye_y - eye_radius // 2), 2)
+        elif self.frightened:
             pygame.draw.circle(surface, self._settings.colors.text, (left_eye_x, eye_y), eye_radius)
             pygame.draw.circle(surface, self._settings.colors.text, (right_eye_x, eye_y), eye_radius)
             pygame.draw.line(surface, self._settings.colors.background, (left_eye_x - eye_radius // 2, eye_y), (left_eye_x + eye_radius // 2, eye_y), 2)
