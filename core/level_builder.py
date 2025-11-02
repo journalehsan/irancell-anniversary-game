@@ -22,7 +22,7 @@ class LevelBuilder:
         width = self._settings.width
         height = self._settings.height
 
-        # Cleaner, more balanced maze with proper spacing
+        # Classic Pac-Man style maze with connected corridors and chambers
         walls_data = [
             # Border walls
             (0, 0, width, grid),
@@ -30,33 +30,50 @@ class LevelBuilder:
             (0, 0, grid, height),
             (width - grid, 0, grid, height),
             
-            # Left side chambers
-            (grid, grid * 2, grid * 2, grid),
-            (grid, grid * 4, grid * 2, grid),
-            (grid * 3, grid * 3, grid, grid),
-            (grid, grid * 7, grid * 2, grid),
-            (grid * 3, grid * 8, grid, grid),
-            (grid, grid * 10, grid * 2, grid),
-            (grid * 3, grid * 11, grid, grid),
+            # Top left chamber
+            (grid * 2, grid * 2, grid * 3, grid),
+            (grid * 2, grid * 2, grid, grid * 3),
             
-            # Center passages and dividers
-            (grid * 4, grid * 2, grid * 2, grid),
-            (grid * 5, grid * 5, grid, grid * 2),
-            (grid * 6, grid * 7, grid * 2, grid),
-            (grid * 7, grid * 10, grid, grid),
-            (grid * 8, grid * 2, grid, grid),
-            (grid * 8, grid * 12, grid, grid),
-            (grid * 9, grid * 5, grid, grid),
+            # Top center area
+            (grid * 6, grid * 2, grid * 2, grid * 3),
+            (grid * 9, grid * 2, grid * 3, grid),
+            (grid * 12, grid * 2, grid * 2, grid * 3),
             
-            # Right side chambers
-            (grid * 11, grid * 2, grid * 2, grid),
-            (grid * 12, grid * 4, grid, grid),
-            (grid * 11, grid * 7, grid * 2, grid),
-            (grid * 13, grid * 10, grid, grid),
-            (grid * 14, grid * 5, grid, grid * 2),
-            (grid * 15, grid * 2, grid * 2, grid),
-            (grid * 15, grid * 11, grid * 2, grid),
-            (grid * 17, grid * 8, grid, grid),
+            # Top right chamber
+            (grid * 15, grid * 2, grid * 3, grid),
+            (grid * 17, grid * 2, grid, grid * 3),
+            
+            # Upper middle section - horizontal barriers
+            (grid * 2, grid * 6, grid * 2, grid),
+            (grid * 5, grid * 6, grid * 3, grid),
+            (grid * 9, grid * 5, grid * 2, grid * 3),
+            (grid * 12, grid * 6, grid * 3, grid),
+            (grid * 16, grid * 6, grid * 2, grid),
+            
+            # Center ghost house
+            (grid * 7, grid * 8, grid * 6, grid),
+            (grid * 7, grid * 8, grid, grid * 2),
+            (grid * 12, grid * 8, grid, grid * 2),
+            (grid * 7, grid * 10, grid * 6, grid),
+            
+            # Lower middle section
+            (grid * 2, grid * 8, grid * 2, grid * 2),
+            (grid * 5, grid * 9, grid * 2, grid),
+            (grid * 13, grid * 9, grid * 2, grid),
+            (grid * 16, grid * 8, grid * 2, grid * 2),
+            
+            # Bottom left chamber
+            (grid * 2, grid * 11, grid, grid * 2),
+            (grid * 2, grid * 11, grid * 3, grid),
+            
+            # Bottom center
+            (grid * 6, grid * 11, grid * 2, grid * 2),
+            (grid * 9, grid * 12, grid * 2, grid),
+            (grid * 12, grid * 11, grid * 2, grid * 2),
+            
+            # Bottom right chamber
+            (grid * 15, grid * 11, grid * 3, grid),
+            (grid * 17, grid * 11, grid, grid * 2),
         ]
 
         for x, y, w, h in walls_data:
@@ -65,10 +82,15 @@ class LevelBuilder:
 
     def build_coins(self) -> "LevelBuilder":
         grid = self._settings.grid_size
+        # Place coins in all open corridors (like original Pac-Man)
         for row in range(1, self._settings.grid_height - 1):
             for col in range(1, self._settings.grid_width - 1):
                 pos_x, pos_y = col * grid, row * grid
-                if not self._has_wall(pos_x, pos_y) and random.random() > 0.7:
+                # Skip the center ghost house area
+                if 7 <= col <= 12 and 8 <= row <= 10:
+                    continue
+                # Place coin if no wall
+                if not self._has_wall(pos_x, pos_y):
                     self._state.coins.append(self._factory.create_coin(pos_x, pos_y))
         return self
 
